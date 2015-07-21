@@ -1,5 +1,88 @@
 <section data-type="chapter">
-<h1>Chapter Title</h1>
+<h1><span id="docs-internal-guid-568e7f96-b15c-3fb5-f5e6-7f84d1265eef">Rethinking Database Design with Apache Drill</span></h1>
 
-<p>You wanted basic, so that's what you got. Here's our markup spec: <a href="https://github.com/oreillymedia/HTMLBook/blob/master/specification.asciidoc">github.com/oreillymedia/HTMLBook/blob/master/specification.asciidoc</a>. And here's how to add custom styles: <a href="http://atlasdocs.oreilly.com/ch07.html">atlasdocs.oreilly.com/ch07.html</a>. Bon courage, mes amis.</p>
+<p><a href="https://github.com/oreillymedia/HTMLBook/blob/master/specification.asciidoc">github.com/oreillymedia/HTMLBook/blob/master/specification.asciidoc</a>.</p>
+
+<section data-type="sect1">
+<h1><span id="docs-internal-guid-205ec7e8-b15c-7f72-537a-fe8cccbf1ecf">USDA National Nutrient Database</span></h1>
+
+<p>Section content goes here</p>
+</section>
+
+<section data-type="sect1">
+<h1><span id="docs-internal-guid-205ec7e8-b15c-d64a-98eb-2b8eafb516df">Creating Tables from Delimited Files</span></h1>
+
+<p>Section content goes here</p>
+</section>
+
+<section data-type="sect1">
+<h1><span id="docs-internal-guid-205ec7e8-b15d-00bf-df70-8d8338ddc2d8">Working with the Data</span></h1>
+
+<p><span id="docs-internal-guid-205ec7e8-b15d-fed1-74b6-e25c258ba3e0">Now that we have the data in a convenient form, we are free to do anything our hearts desire with this dataset. From inside Drill, you can refer to these tables as dfs.nndb.TABLE_NAME. This means that the new database files which contain the data from the original files is now in the directory you associated with the nndb workspace when you configured the nndb workspace.</span></p>
+
+<p><span id="docs-internal-guid-205ec7e8-b15e-1341-d050-88ca0b3c1bc4">Here is an entity relationship diagram (ERD) which should make querying this data a little easier.</span></p>
+
+<figure><img alt="" class="inndb-sr27_-_complexpng" src="nndb-sr27_-_Complex.png" />
+<figcaption>
+<p><span>USDA NNDB SR27 - Standard</span></p>
+</figcaption>
+</figure>
+
+<p><span id="docs-internal-guid-205ec7e8-b15f-3126-1aab-056178dd041a">When starting to work with a new dataset which I do not fully understand, I tend to explore the data and do what some people call introspection. This is really helpful for getting a feel for the data. When doing this, I commonly limit all of my queries to return only about 20 lines of data. This makes it much easier to get an understanding of the data rather than potentially seeing thousands of lines scrolling by.</span></p>
+
+<p><span id="docs-internal-guid-205ec7e8-b15f-3126-1aab-056178dd041a">In this dataset, the first thing to point is that the Food Description (<strong>food_des</strong>) table and the Nutritional Data (<strong>nut_data</strong>) are the hubs for all the data in this database. The complete definitions for all the fields in these tables can be found in the <a href="https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR27/sr27_doc.pdf">SR27 document</a>.</span></p>
+
+<p><span id="docs-internal-guid-205ec7e8-b15f-3126-1aab-056178dd041a">The <strong>langual</strong> table and the <strong>langdesc</strong> table contain the generalized definitions of the items listed in the Food Description table. This query can help you get an idea of the data in those tables:</span></p>
+
+<pre data-type="programlisting">
+SELECT lf.NDB_No, ld.Description FROM 
+dfs.nndb.langual lf, dfs.nndb.langdesc ld 
+where lf.FACTOR_CODE=ld.FACTOR_CODE limit 20;
+</pre>
+
+<p><span id="docs-internal-guid-205ec7e8-b15f-c08f-1132-4c4ad3088775">This query could have been written with the JOIN USING syntax:</span></p>
+
+<pre data-code-language="sql" data-type="programlisting">
+SELECT lf.NDB_No, ld.Description FROM dfs.nndb.langual lf 
+LEFT JOIN dfs.nndb.langdesc ld USING (FACTOR_CODE) limit 20;
+</pre>
+
+<p><span id="docs-internal-guid-205ec7e8-b15f-c08f-1132-4c4ad3088775">There are footnotes related to food descriptions and there are footnotes related to nutrition data. These tables can be joined using this query:</span></p>
+
+<pre class="drop-element-attached-top drop-element-attached-center drop-target-attached-bottom drop-target-attached-center" data-type="programlisting">
+SELECT * FROM dfs.nndb.nut_data nd, dfs.nndb.footnote fn 
+where nd.ndb_no=fn.ndb_no and nd.nutr_no=fn.nutr_no 
+and nd.Nutr_No is not null limit 10;</pre>
+
+<p><span id="docs-internal-guid-205ec7e8-b15f-c08f-1132-4c4ad3088775">The final query we will use will cover joining the core tables to get a better view of the data:</span></p>
+
+<pre data-type="programlisting">
+SELECT * FROM
+dfs.nndb.food_des fd
+LEFT JOIN dfs.nndb.fd_group fg ON (fg.FdGrp_Cd=fd.FdGrp_Cd)
+LEFT JOIN dfs.nndb.weight w ON (fd.NDB_No=w.NDB_No)
+LEFT JOIN dfs.nndb.nut_data nd ON (fd.NDB_No=nd.NDB_No)
+LEFT JOIN dfs.nndb.src_cd sc ON (nd.Src_Cd=sc.Src_Cd)
+LEFT JOIN dfs.nndb.nutr_def ndd ON (nd.Nutr_No=ndd.Nutr_No)
+LEFT JOIN dfs.nndb.deriv_cd dc ON (nd.Deriv_Cd=dc.Deriv_Cd)
+ORDER BY fd.NDB_No ASC limit 20;
+</pre>
+
+<p><br />
+<span id="docs-internal-guid-205ec7e8-b15f-c08f-1132-4c4ad3088775">With this query we can see the data really starts to take shape. It becomes a little easier to see what is in this database when everything is joined together.</span></p>
+</section>
+
+<section data-type="sect1">
+<h1><span id="docs-internal-guid-205ec7e8-b15d-43e9-7c4b-e0ce410eb599">What’s Next?</span></h1>
+
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">Now that you have an understanding of how to query this database, you can use it to explore the different nutritional information for products you consume or have considered trying. You could calculate the complete nutritional information from a recipe card.</span></p>
+
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">The NNDB is convenient to use and an openly available database, and, when coupled with Drill, you can use it without having to be a software engineer. There is no need to figure out how to transform and load data into a relational database just to query the data. You can even use Drill as a datasource within any application (e.g. Tableau, Microsoft Excel) which can connect to a database through a standard interface using JDBC or ODBC connectors.</span></p>
+
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">You don’t have to transform the data in order to use Drill against your datasource. If a data set is too large you can go from running Drill queries on your laptop to running them on your cluster. Drill also supports joining across data sources at the same time (e.g. join csv with parquet with json with hbase).</span></p>
+
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">In part two of this series we will dig deeper into this dataset and look at more complex functionality that is available for use from within Drill. We will also explore how Drill enables us to evolve to a SQL + NoSQL approach.</span></p>
+
+<p>Do you have a great new idea for how to leverage Drill or even this dataset? Please share it below for everyone to read. I would love to hear about them.</p>
+</section>
 </section>
