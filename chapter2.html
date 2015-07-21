@@ -1,10 +1,6 @@
 <section data-type="chapter">
 <h1><span id="docs-internal-guid-d5ca8b65-b182-3687-682c-0b8797faab5c">The Evolution of Database Schemas using SQL + NoSQL</span></h1>
 
-<p><span id="docs-internal-guid-06211478-b182-5df1-7aa6-15dccdae46c0">In part one of this series,|Drilling into Healthy Choices, we explored using Drill to create Parquet tables as well as configuring Drill to read data formats that are not very standard. We also explored the USDA National Nutrient Database by writing some different queries in Drill.</span></p>
-
-<p><span id="docs-internal-guid-06211478-b182-5df1-7aa6-15dccdae46c0">In part two of this series, we are going to utilize this same database to think beyond traditional database design.</span></p>
-
 <section data-type="sect1">
 <h1><span id="docs-internal-guid-06211478-b182-9f8d-d06c-ff3f3e206861">Traditional Database Design</span></h1>
 
@@ -16,9 +12,9 @@
 <section data-type="sect1">
 <h1>Time to Evolve</h1>
 
-<p>Let’s revisit the database schema for the National Nutrient Database provided by the USDA.</p>
+<p>Let’s revisit the database schema for the National Nutrient Database:</p>
 
-<figure><img alt="" class="inndb-sr27_-_complexpng" src="nndb-sr27_-_Complex.png" />
+<figure><img alt="USDA NNDB SR27 - Standard" class="inndb-sr27_-_complexpng" src="nndb-sr27_-_Complex.png" />
 <figcaption><span id="docs-internal-guid-06211478-b183-d41a-fa7c-80183adf3956">USDA NNDB SR27 - Standard</span></figcaption>
 </figure>
 
@@ -30,7 +26,7 @@
 
 <p><span id="docs-internal-guid-06211478-b184-4d51-a3bb-b9c3a650d5c0">Let’s start simplifying the database schema to see if we can make it better for all parties involved:</span></p>
 
-<figure><img alt="" class="inndb-sr27_-_simple1png" src="nndb-sr27_-_Simple1.png" />
+<figure><img alt="USDA NNDB SR27 - Simplified v1" class="inndb-sr27_-_simple1png" src="nndb-sr27_-_Simple1.png" />
 <figcaption><span id="docs-internal-guid-06211478-b185-3af4-2ca1-496b99da41ef">USDA NNDB SR27 - Simplified v1</span></figcaption>
 </figure>
 
@@ -44,7 +40,7 @@
 
 <p><span>By “wasting” a little bit of space (compared to the standard design), we now end up with a table of data that is capable of being understood by anyone. Here is a simpler view of this data schema:</span></p>
 
-<figure><img alt="" class="inndb-sr27_-_simple2png" src="nndb-sr27_-_Simple2.png" />
+<figure><img alt="USDA NNDB SR27 - Simplified v2" class="inndb-sr27_-_simple2png" src="nndb-sr27_-_Simple2.png" />
 <figcaption><span id="docs-internal-guid-06211478-b187-d8cb-4c41-5151972bc8d1">USDA NNDB SR27 - Simplified v2</span></figcaption>
 </figure>
 
@@ -139,7 +135,7 @@ AND fd.nut_data.nutr_no IN (203,204,205);
 
 <p><span id="docs-internal-guid-06211478-b18c-d250-dc00-99b3aa3970b2">While the two queries look similar in length, the complexity of them is drastically different. The second query only looks long because of all the naming of the fields in the select statement. Changing that query to SELECT * would leave us with:</span></p>
 
-<pre class="drop-element-attached-top drop-element-attached-center drop-target-attached-bottom drop-target-attached-center" data-code-language="sql" data-type="programlisting">
+<pre data-code-language="sql" data-type="programlisting">
 SELECT *
 FROM (SELECT *, FLATTEN(fd1.nut_data.data_src) as data_src
 FROM (SELECT *, FLATTEN(fd2.nut_data) FROM dfs.tmp.`food_des.json` fd2) fd1) fd
@@ -189,8 +185,6 @@ YourObject yourObject2 = gson.fromJson(json, YourObject.class);
 
 <p><span id="docs-internal-guid-06211478-b18f-80b3-7c88-b87a4fc2aeeb">You can also perform real-time analytics on the JSON data directly against HBase using Drill, because Drill has the ability to query HBase out of the box. There is no need to do a data extract, or to transform the data into a different format.</span></p>
 
-<p><span id="docs-internal-guid-06211478-b18f-80b3-7c88-b87a4fc2aeeb">I hope this article has left you inspired to think outside of the traditional approaches of database design and database systems. Please share your thoughts or ideas on these topics below. I would love to hear from you.</span></p>
+<p><span id="docs-internal-guid-06211478-b18f-80b3-7c88-b87a4fc2aeeb">I hope this article has left you inspired to think outside of the traditional approaches of database design and database systems. Please share your thoughts or ideas on these topics below in the comments section.</span></p>
 </section>
-
-<p>&nbsp;</p>
 </section>
