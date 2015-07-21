@@ -1,7 +1,7 @@
 <section data-type="chapter">
 <h1><span id="docs-internal-guid-568e7f96-b15c-3fb5-f5e6-7f84d1265eef">Drilling into Healthy Choices</span></h1>
 
-<p><span id="docs-internal-guid-205ec7e8-b169-9163-bb6f-e3ab36c90a3b">Drill is a SQL-engine for everything (almost). From simple tabular data, to semi-structured to even the most complex structured JSON data. In this two part series we will explore what Apache Drill can do and how it enables us to rethink database design to make everyone's life easier. &nbsp;In this first installment, we will use the National Nutrient Database (NNDB) to illustrate how to explore a new database with Drill. &nbsp;The NNDB is convenient to use and an openly available database, and, when coupled with Drill, you can use it without having to be a software engineer. There is no need to figure out how to transform and load data into a relational database just to query the data. You can even use Drill as a datasource within any application (e.g. Tableau, Microsoft Excel) which can connect to a database through a standard interface. &nbsp;Let’s get started.</span></p>
+<p><span id="docs-internal-guid-205ec7e8-b169-9163-bb6f-e3ab36c90a3b">Drill is a SQL-engine for everything (almost). From simple tabular data, to semi-structured to even the most complex structured JSON data. We will explore what Apache Drill can do and how it enables us to rethink database design to make everyone's life easier. &nbsp;In the first half of this article, we will use the National Nutrient Database (NNDB) to illustrate how to explore a new database with Drill. The NNDB is convenient to use and is an openly available database, and, when coupled with Drill, you can use it without having to be a software engineer. There is no need to figure out how to transform and load data into a relational database just to query the data. You can even use Drill as a datasource within any application (e.g. Tableau, Microsoft Excel) which can connect to a database through a standard interface.&nbsp;Let’s get started.</span></p>
 
 <section data-type="sect1">
 <h1><span id="docs-internal-guid-205ec7e8-b15c-7f72-537a-fe8cccbf1ecf">USDA National Nutrient Database</span></h1>
@@ -14,7 +14,7 @@
 
 <p><span id="docs-internal-guid-205ec7e8-b166-fc24-2ba3-37ac46ffe919">To start your Drill instance you can use either of these two command lines:</span></p>
 
-<pre data-type="programlisting">
+<pre data-code-language="python" data-type="programlisting">
  &gt; sqlline -u jdbc:drill:zk=local
 
 &nbsp;# this is a shortcut for the previous line (linux/mac only)
@@ -25,7 +25,7 @@
 
 <p><span id="docs-internal-guid-205ec7e8-b166-fc24-2ba3-37ac46ffe919">The NNDB uses characters that most people don’t use for delimited file formats. The fields are separated by carets (^) and text fields are surrounded by tildes (~). Because of this we need to add a little bit of configuration to enable Drill to properly read / parse these files. Paste this file format definition to the formats section of the dfs storage definition which can be found in Drill’s web interface under the storage menu option:</span></p>
 
-<pre data-code-language="json" data-type="programlisting">
+<pre data-code-language="javascript" data-type="programlisting">
  &nbsp;"nndb": {
 &nbsp;&nbsp;&nbsp;&nbsp;"type": "text",
 &nbsp;&nbsp;&nbsp;&nbsp;"extensions": [ "txt" ],
@@ -37,7 +37,7 @@
 
 <p><span id="docs-internal-guid-205ec7e8-b166-fc24-2ba3-37ac46ffe919">Next, let’s convert these tables into Parquet format to simplify the queries. As we do that, we can also add a workspace definition that has parquet as a default format and allows tables to be created. Workspaces are abbreviations are a way to access files or tables. Paste the definition below into the workspaces section of your dfs storage definition. Make sure that you change the location parameter to the directory where you want to store your tables. </span></p>
 
-<pre data-code-language="json" data-type="programlisting">
+<pre data-code-language="javascript" data-type="programlisting">
 &nbsp; "nndb": {
 &nbsp;&nbsp;&nbsp;&nbsp;"location": "/opt/drill/nndb",
 &nbsp;&nbsp; &nbsp;"writable": true,
@@ -93,8 +93,8 @@ create table dfs.nndb.data_src(DataSrc_ID, Authors, Title, `Year`, Journal, Vol_
 
 <p><span id="docs-internal-guid-205ec7e8-b165-3d41-f161-014f196c5a6b">If you put all these queries in a file called nndb.sql, then you could have Drill run all of these commands at one time:</span></p>
 
-<pre data-type="programlisting">
-drill-embedded --run=nndb.sql
+<pre data-code-language="python" data-type="programlisting">
+ &gt; drill-embedded --run=nndb.sql
 </pre>
 
 <p><span id="docs-internal-guid-205ec7e8-b165-aebf-379a-2aca1fae1814">Otherwise, just paste them all into the command line and they will run in order. This should take about 15 seconds. </span></p>
@@ -107,7 +107,7 @@ drill-embedded --run=nndb.sql
 
 <p><span id="docs-internal-guid-205ec7e8-b15e-1341-d050-88ca0b3c1bc4">Here is an entity relationship diagram (ERD) which should make querying this data a little easier.</span></p>
 
-<figure><img alt="" class="inndb-sr27_-_complexpng" src="nndb-sr27_-_Complex.png" />
+<figure><img alt="USDA NNDB SR27 - Standard" class="inndb-sr27_-_complexpng" src="nndb-sr27_-_Complex.png" />
 <figcaption>
 <p><span>USDA NNDB SR27 - Standard</span></p>
 </figcaption>
@@ -119,7 +119,7 @@ drill-embedded --run=nndb.sql
 
 <p><span id="docs-internal-guid-205ec7e8-b15f-3126-1aab-056178dd041a">The <strong>langual</strong> table and the <strong>langdesc</strong> table contain the generalized definitions of the items listed in the Food Description table. This query can help you get an idea of the data in those tables:</span></p>
 
-<pre data-type="programlisting">
+<pre data-code-language="sql" data-type="programlisting">
 SELECT lf.NDB_No, ld.Description FROM 
 dfs.nndb.langual lf, dfs.nndb.langdesc ld 
 where lf.FACTOR_CODE=ld.FACTOR_CODE limit 20;
@@ -134,14 +134,14 @@ LEFT JOIN dfs.nndb.langdesc ld USING (FACTOR_CODE) limit 20;
 
 <p><span id="docs-internal-guid-205ec7e8-b15f-c08f-1132-4c4ad3088775">There are footnotes related to food descriptions and there are footnotes related to nutrition data. These tables can be joined using this query:</span></p>
 
-<pre data-type="programlisting">
+<pre data-code-language="sql" data-type="programlisting">
 SELECT * FROM dfs.nndb.nut_data nd, dfs.nndb.footnote fn 
 where nd.ndb_no=fn.ndb_no and nd.nutr_no=fn.nutr_no 
 and nd.Nutr_No is not null limit 10;</pre>
 
 <p><span id="docs-internal-guid-205ec7e8-b15f-c08f-1132-4c4ad3088775">The final query we will use will cover joining the core tables to get a better view of the data:</span></p>
 
-<pre data-type="programlisting">
+<pre data-code-language="sql" data-type="programlisting">
 SELECT * FROM
 dfs.nndb.food_des fd
 LEFT JOIN dfs.nndb.fd_group fg ON (fg.FdGrp_Cd=fd.FdGrp_Cd)
@@ -157,16 +157,12 @@ ORDER BY fd.NDB_No ASC limit 20;
 </section>
 
 <section data-type="sect1">
-<h1><span id="docs-internal-guid-205ec7e8-b15d-43e9-7c4b-e0ce410eb599">What’s Next?</span></h1>
+<h1>Opportunities with Drill</h1>
 
-<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">Now that you have an understanding of how to query this database, you can use it to explore the different nutritional information for products you consume or have considered trying. You could calculate the complete nutritional information from a recipe card.</span></p>
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">Now that you have an understanding of how to query this database, you can use it to explore the different nutritional information for products you consume or have considered trying. You could even calculate the complete nutritional information from a recipe card.</span></p>
 
-<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">The NNDB is convenient to use and an openly available database, and, when coupled with Drill, you can use it without having to be a software engineer. There is no need to figure out how to transform and load data into a relational database just to query the data. You can even use Drill as a datasource within any application (e.g. Tableau, Microsoft Excel) which can connect to a database through a standard interface using JDBC or ODBC connectors.</span></p>
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">The NNDB is convenient to use, and, when coupled with Drill, you can use it without having to be a software engineer. There is no need to figure out how to transform and load data into a relational database just to query the data. You can even use Drill as a datasource within any application (e.g. Tableau, Microsoft Excel) which can connect to a database through a standard interface using JDBC or ODBC connectors.</span></p>
 
-<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">You don’t have to transform the data in order to use Drill against your datasource. If a data set is too large you can go from running Drill queries on your laptop to running them on your cluster. Drill also supports joining across data sources at the same time (e.g. join csv with parquet with json with hbase).</span></p>
-
-<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">In part two of this series we will dig deeper into this dataset and look at more complex functionality that is available for use from within Drill. We will also explore how Drill enables us to evolve to a SQL + NoSQL approach.</span></p>
-
-<p>Do you have a great new idea for how to leverage Drill or even this dataset? Please share it below for everyone to read. I would love to hear about them.</p>
+<p><span id="docs-internal-guid-205ec7e8-b15d-5866-0d9f-585e6fb023f4">If a data set is too large you can go from running Drill queries on your laptop to running them on your cluster. Drill also supports joining across data sources (e.g. join csv with parquet with json with hbase) </span>at the same time<span>.</span></p>
 </section>
 </section>
