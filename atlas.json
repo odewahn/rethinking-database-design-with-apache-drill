@@ -30,7 +30,11 @@
       "index": true,
       "syntaxhighlighting": true,
       "show_comments": false,
-      "consolidated": true
+      "consolidated": true,
+      "javascripts": [
+          "thebe.js",
+          "https://d3ansictanv2wj.cloudfront.net/main-built-f2501cbe.js"
+        ]
     }
   },
   "theme": "",
