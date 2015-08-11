@@ -61,6 +61,17 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:/opt/mapr/drillodbc/lib/64
 
 RUN mkdir /usr/data
 
+
+#
+# Install the USDA data source
+#
+RUN mkdir -p /tmp/sr27asc
+WORKDIR /tmp/sr27asc
+RUN wget https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR27/dnload/sr27asc.zip && \
+    unzip sr27asc.zip && \
+    rm sr27asc.zip
+
+
 # Now install ipymd from source
 RUN mkdir -p /usr/src
 WORKDIR /usr/src
