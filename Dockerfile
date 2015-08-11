@@ -47,6 +47,7 @@ ADD drill-env.sh /opt/drill/apache-drill-1.1.0/conf/drill-env.sh
 RUN apt-get install -y alien dpkg-dev debhelper build-essential wget unixodbc-dev screen unzip
 
 RUN pip2 install pyodbc
+RUN pip3 install ipymd
 
 WORKDIR /tmp
 
@@ -71,13 +72,6 @@ RUN wget https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR27/dnload/s
     unzip sr27asc.zip && \
     rm sr27asc.zip
 
-
-# Now install ipymd from source
-RUN mkdir -p /usr/src
-WORKDIR /usr/src
-RUN git clone https://github.com/rossant/ipymd
-WORKDIR /usr/src/ipymd
-RUN python3 setup.py install
 
 # Set up the PYTHONPATH info
 RUN ipython profile create
