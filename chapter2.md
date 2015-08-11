@@ -96,6 +96,45 @@ LEFT JOIN dfs.nndb.langdesc ld ON (lf.FACTOR_CODE=ld.FACTOR_CODE)
 where fd.NDB_No=02001;
 </pre>
 
+```python
+>>> import pyodbc
+...
+>>> conn = pyodbc.connect("DSN=drill", autocommit=True)
+>>> cursor = conn.cursor()
+```
+
+```python
+>>> import pandas as pd
+```
+
+```python
+>>> sql = """
+>>> SELECT fd.NDB_No, ld.Description FROM dfs.nndb.food_des fd
+>>> LEFT JOIN dfs.nndb.langual lf ON (fd.NDB_No=lf.NDB_No)
+>>> LEFT JOIN dfs.nndb.langdesc ld ON (lf.FACTOR_CODE=ld.FACTOR_CODE)
+>>> where fd.NDB_No=02001
+>>> """
+...
+>>> dat = pd.read_sql(sql, conn)
+...
+>>> dat
+   NDB_No                                     Description
+0   02001                          SPICE OR HERB (US CFR)
+1   02001                 0200 SPICES AND HERBS (USDA SR)
+2   02001                                        ALLSPICE
+3   02001  FRUIT, PEEL PRESENT, CORE, PIT OR SEED PRESENT
+4   02001                                   FINELY GROUND
+5   02001                                NOT HEAT-TREATED
+6   02001                   COOKING METHOD NOT APPLICABLE
+7   02001                                   WATER REMOVED
+8   02001                                 NATURALLY DRIED
+9   02001                                       SUN DRIED
+10  02001                          NO PACKING MEDIUM USED
+11  02001                 CONTAINER OR WRAPPING NOT KNOWN
+12  02001                  FOOD CONTACT SURFACE NOT KNOWN
+13  02001                HUMAN FOOD, NO AGE SPECIFICATION
+```
+
 This is the query in the new schema, which utilizes the FLATTEN function within Drill:
 
 <pre data-code-language="sql" data-type="programlisting">SELECT NDB_No, FLATTEN(langual) FROM

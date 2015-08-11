@@ -46,8 +46,7 @@ ADD drill-env.sh /opt/drill/apache-drill-1.1.0/conf/drill-env.sh
 #
 RUN apt-get install -y alien dpkg-dev debhelper build-essential wget unixodbc-dev screen unzip
 
-RUN pip2 install pyodbc
-RUN pip3 install ipymd
+RUN pip3 install pyodbc ipymd
 
 WORKDIR /tmp
 
