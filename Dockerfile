@@ -76,3 +76,13 @@ RUN wget https://www.ars.usda.gov/SP2UserFiles/Place/12354500/Data/SR27/dnload/s
 RUN ipython profile create
 RUN echo "c.NotebookApp.contents_manager_class = 'ipymd.IPymdContentsManager'" >> /root/.ipython/profile_default/ipython_notebook_config.py
 RUN echo "c.IPymdContentsManager.format = 'markdown'" >> /root/.ipython/profile_default/ipython_notebook_config.py
+
+
+#
+# Now add the codebase as the home directory
+#
+ADD . /usr/home
+
+WORKDIR /usr/home
+RUN chmod +x start.sh
+
