@@ -20,7 +20,7 @@ docker run -it \
   -p 8047:8047 \
   -v $(pwd):/usr/home \
   -w /usr/home \
-  mapr-drill \
+  oreillymedia/mapr-drill \
   /bin/bash
 ```
 
@@ -28,4 +28,32 @@ Then, once you're at the shell, run start script
 
 ```
 ./start.sh
+```
+
+## tmpnb setup
+
+To run under tmpnb:
+
+```
+export TOKEN=$( head -c 30 /dev/urandom | xxd -p )
+
+docker run \
+   --net=host \
+   -d \
+   -e CONFIGPROXY_AUTH_TOKEN=$TOKEN \
+   jupyter/configurable-http-proxy \
+  --default-target http://127.0.0.1:9999
+
+docker run \
+   --net=host \
+   -d \
+   -e CONFIGPROXY_AUTH_TOKEN=$TOKEN \
+   -v /var/run/docker.sock:/docker.sock \
+   zischwartz/tmpnb python orchestrate.py \
+   --image="oreillymedia/mapr-drill" \
+   --allow_origin="*" \
+   --command="/usr/home/start.sh" \
+   --cull_timeout=240 \
+   --cull_period=60 \
+   --pool_size=3
 ```
