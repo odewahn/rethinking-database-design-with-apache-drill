@@ -1,0 +1,53 @@
+#
+# Based on https://github.com/sharelatex/sharelatex/wiki/Nginx-as-a-Reverse-Proxy
+#
+
+server {
+    listen         80;
+    server_name    _; # Catch all, see http://nginx.org/en/docs/http/server_names.html
+
+    set $static_path /usr/home;
+
+    client_max_body_size 50M;
+
+    location / {
+       root $static_path/;
+    }
+
+    location /jupyter-term {
+        proxy_pass http://localhost:8888/terminals/1/;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_x_forwarded_host;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 3m;
+        proxy_send_timeout 3m;
+    }
+
+    location /jupyter {
+        proxy_pass http://localhost:8888/;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_x_forwarded_host;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 3m;
+        proxy_send_timeout 3m;
+    }
+
+    location /drill-web {
+        proxy_pass http://localhost:8047/;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_x_forwarded_host;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 3m;
+        proxy_send_timeout 3m;
+    }
+
+}
