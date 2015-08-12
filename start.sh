@@ -21,7 +21,7 @@ sleep 20
 echo "Starting Jupyter Notebook"
 
 # start the notebook server
-ipython notebook \
+ipython3 notebook \
    --no-browser \
    --port 8888 \
    --ip=* \
