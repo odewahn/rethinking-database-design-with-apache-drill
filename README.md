@@ -26,16 +26,6 @@ docker run -it \
 ```
 
 
-
-docker run -it \
-  -d \
-  -p 8888:8888 \
-  -p 8047:8047 \
-  -w /usr/home \
-  oreillymedia/mapr-drill \
-  /usr/home/start.sh
-
-
 Then, once you're at the shell, run start script
 
 ```
