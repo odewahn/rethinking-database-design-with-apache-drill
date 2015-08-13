@@ -16,6 +16,7 @@ docker build -t mapr-drill .
 
 ```
 docker run -it \
+  -p 80:80 \
   -p 8888:8888 \
   -p 8047:8047 \
   -v $(pwd):/usr/home \
@@ -23,6 +24,17 @@ docker run -it \
   oreillymedia/mapr-drill \
   /bin/bash
 ```
+
+
+
+docker run -it \
+  -d \
+  -p 8888:8888 \
+  -p 8047:8047 \
+  -w /usr/home \
+  oreillymedia/mapr-drill \
+  /usr/home/start.sh
+
 
 Then, once you're at the shell, run start script
 
