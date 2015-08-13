@@ -65,7 +65,7 @@ RUN mkdir /usr/data
 # Configure NGINX
 #
 ADD nginx-site /etc/nginx/sites-available/nginx-site
-RUN /etc/nginx/sites-enabled/default
+RUN rm /etc/nginx/sites-enabled/default
 RUN ln -s /etc/nginx/sites-available/mapr .
 
 
